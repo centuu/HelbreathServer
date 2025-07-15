@@ -239,6 +239,19 @@ static void Pop(char*& src, string& str) {
 class CGame
 {
 public:
+
+	void SendChat(char* str);
+
+	void DrawDialogBox_Rebirth(int msX, int msY);
+	void DlgBoxClick_Rebirth(int msX, int msY);
+
+	//HeatoN rebirth
+	int m_iRebirthLevel;
+	short m_sRebirthStatus, m_sRebirthEnabled;
+
+	int getRebirthStats();
+	void NotifyMsg_Rebirth(char* pData);
+
 	// CLEROTH - AURAS
 	void CheckActiveAura(short sX, short sY, DWORD dwTime, short sOwnerType);
 	void CheckActiveAura2(short sX, short sY, DWORD dwTime, short sOwnerType);
@@ -1112,6 +1125,8 @@ public:
 
 	short iMaxStats;
 	int iMaxLevel;
+
+	DWORD GetGoldCount();
 };
 
 #endif // !defined(AFX_GAME_H__0089D9E3_74E6_11D2_A8E6_00001C7030A6__INCLUDED_)

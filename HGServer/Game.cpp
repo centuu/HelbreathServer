@@ -1661,118 +1661,130 @@ void CGame::RequestInitDataHandler(int iClientH, char * pData, char cKey)
 	ip   = (int *)cp;
 	*ip  = m_pClientList[iClientH]->m_iHP;
 	cp  += 4;
-
+	//10
 	ip   = (int *)cp;
 	*ip  = m_pClientList[iClientH]->m_iMP;
 	cp  += 4;
-
+	//14
 	ip   = (int *)cp;
 	*ip  = m_pClientList[iClientH]->m_iSP;
 	cp  += 4;
-
+	//18
 	ip   = (int *)cp;
 	*ip  = m_pClientList[iClientH]->m_iDefenseRatio;
 	cp  += 4;
-
+	//22
 	ip   = (int *)cp;
 	*ip  = m_pClientList[iClientH]->m_iHitRatio;
 	cp  += 4;
-
+	//26
 	ip   = (int *)cp;
 	*ip  = m_pClientList[iClientH]->m_iLevel;
 	cp  += 4;
-
+	//30
 	ip   = (int *)cp;
 	*ip  = m_pClientList[iClientH]->m_iStr;		
 	cp  += 4;
-
+	//34
 	ip   = (int *)cp;
 	*ip  = m_pClientList[iClientH]->m_iInt;					
 	cp  += 4;
-
+	//38
 	ip   = (int *)cp;
 	*ip  = m_pClientList[iClientH]->m_iVit;								
 	cp  += 4;
-
+	//42
 	ip   = (int *)cp;
 	*ip  = m_pClientList[iClientH]->m_iDex;			
 	cp  += 4;
-
+	//46
 	ip   = (int *)cp;
 	*ip  = m_pClientList[iClientH]->m_iMag;						
 	cp  += 4;
-
+	//50
 	ip   = (int *)cp;
 	*ip  = m_pClientList[iClientH]->m_iCharisma;
 	cp  += 4;
-
+	//54
 	iStats = (m_pClientList[iClientH]->m_iStr + m_pClientList[iClientH]->m_iDex + m_pClientList[iClientH]->m_iVit +  
 		m_pClientList[iClientH]->m_iInt + m_pClientList[iClientH]->m_iMag + m_pClientList[iClientH]->m_iCharisma); 
 
-	m_pClientList[iClientH]->m_iLU_Pool =  m_pClientList[iClientH]->m_iLevel*3 - (iStats - 70);
+	m_pClientList[iClientH]->m_iLU_Pool =  m_pClientList[iClientH]->m_iLevel*3 - (iStats - 70) + m_pClientList[iClientH]->getRebirthStats();
 	wp = (WORD *)cp; 
 	//*wp = m_pClientList[iClientH]->m_iLevel*3 - (iStats - 70); 
 	*wp = m_pClientList[iClientH]->m_iLU_Pool;
 	cp += 2;
-
+	//56
 	*cp = m_pClientList[iClientH]->m_cVar;
 	cp++;
-
+	//57
 	*cp = 0;
 	cp++;
-
+	//58
 	*cp = 0;
 	cp++;
-
+	//59
 	*cp = 0;
 	cp++;
-
+	//60
 	*cp = 0;
 	cp++;
-
+	//61
 	dwp   = (DWORD *)cp;
 	*dwp  = m_pClientList[iClientH]->m_iExp;
 	cp  += 4;
-
+	//65
 	ip = (int *)cp;
 	*ip  = m_pClientList[iClientH]->m_iEnemyKillCount;
 	cp  += 4;
-
+	//69
 	ip = (int *)cp;
 	*ip  = m_pClientList[iClientH]->m_iPKCount;
 	cp  += 4;
-
+	//73
 	dwp = (DWORD *)cp;
 	*dwp  = m_pClientList[iClientH]->m_iRewardGold;
 	cp  += 4;
-
+	//77
 	memcpy(cp, m_pClientList[iClientH]->m_cLocation, 10);
 	cp  += 10;
-
+	//87
 	memcpy(cp, m_pClientList[iClientH]->m_cGuildName, 20);
 	cp  += 20;
-
+	//107
 	ip   = (int *)cp;
 	*ip  = m_pClientList[iClientH]->m_iGuildRank;
 	cp  += 4;
-
+	//111
 	// v1.4311
 	*cp = (char)m_pClientList[iClientH]->m_iSuperAttackLeft;
 	cp++;
-
+	//112
 	// v1.4311-3 
 	ip   = (int *)cp;
 	*ip  = m_pClientList[iClientH]->m_iFightzoneNumber;
 	cp  += 4;
-
+	//116
 	sp = (short*)cp;
 	*sp = m_sCharStatLimit;
 	cp += 2;
-
+	//118
 	ip = (int*)cp;
 	*ip = m_iPlayerMaxLevel;
 	cp += 4;
-
+	//122
+	ip = (int*)cp;
+	*ip = m_pClientList[iClientH]->m_iRebirthLevel;
+	cp += 4;
+	//126
+	sp = (short*)cp;
+	*sp = m_pClientList[iClientH]->m_sRebirthStatus;
+	cp += 2;
+	//128
+	sp = (short*)cp;
+	*sp = m_pClientList[iClientH]->m_sRebirthEnabled;
+	cp += 2;
+	//130
 	//hbest
 	m_pClientList[iClientH]->isForceSet = FALSE;
 	m_pClientList[iClientH]->m_iPartyID = NULL;
@@ -1788,7 +1800,7 @@ void CGame::RequestInitDataHandler(int iClientH, char * pData, char cKey)
 	//Debug Event
 	//DbgWnd->AddEventMsg(MSG_SEND,pBuffer,180,0);
 
-	iRet = m_pClientList[iClientH]->m_pXSock->iSendMsg(pBuffer, 124);// Original : 115
+	iRet = m_pClientList[iClientH]->m_pXSock->iSendMsg(pBuffer, 124+6);// Original : 115
 	switch (iRet) {
 	case DEF_XSOCKEVENT_QUENEFULL:
 	case DEF_XSOCKEVENT_SOCKETERROR:
@@ -3854,6 +3866,18 @@ void CGame::CheckClientResponseTime()
 					DeleteClient(i, TRUE, TRUE);
 					break;	
 				}
+
+				if (m_pClientList[i]->m_sRebirthEnabled == 1 &&
+					m_pClientList[i]->m_sRebirthStatus == 1 &&
+					m_pClientList[i]->m_iLevel == m_iPlayerMaxLevel)
+				{
+					m_pClientList[i]->m_sRebirthStatus = 0;
+					m_pClientList[i]->m_sRebirthEnabled = 0;
+
+					m_pClientList[i]->m_iLU_Pool = m_pClientList[i]->m_iLU_Pool + 3;
+
+					ShowClientMsg(i, "Congratulations! Rebirth completed!");
+				}
 				
 				if ((m_pClientList[i]->m_iHungerStatus <= 30) && (m_pClientList[i]->m_iHungerStatus >= 0)) 
 					iPlusTime = (30 - m_pClientList[i]->m_iHungerStatus)*1000;
@@ -4111,6 +4135,12 @@ void CGame::CheckClientResponseTime()
 						SendNotifyMsg(NULL, i, DEF_NOTIFY_TOBERECALLED, NULL, NULL, NULL, NULL);
 						RequestTeleportHandler(i, "0   ");
 					}
+				}
+
+				if (m_pClientList[i]->m_iRebirthLevel > 0 && (memcmp(m_pMapList[m_pClientList[i]->m_cMapIndex]->m_cName, "ABarracks", 9) == 0 || memcmp(m_pMapList[m_pClientList[i]->m_cMapIndex]->m_cName, "EBarracks", 9) == 0))
+				{
+					SendNotifyMsg(NULL, i, DEF_NOTIFY_TOBERECALLED, NULL, NULL, NULL, NULL);
+					RequestTeleportHandler(i, "1   ");
 				}
 					
 				if (m_pClientList[i] == NULL) break;
@@ -4960,6 +4990,8 @@ void CGame::InitPlayerData(int iClientH, char * pData, DWORD dwSize)
 	m_pClientList[iClientH]->read_mobs_data();
 	m_pClientList[iClientH]->read_shards_data();
 	m_pClientList[iClientH]->read_fragments_data();
+
+	SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_REBIRTH, m_pClientList[iClientH]->m_sRebirthEnabled, m_pClientList[iClientH]->m_iRebirthLevel, m_pClientList[iClientH]->m_sRebirthStatus, NULL);
 }
 
 void CGame::GameProcess()
@@ -7273,6 +7305,162 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 				m_pClientList[iClientH]->m_iGizonItemUpgradeLeft = atoi(token);
 				cReadModeA = 0;
 				break;
+
+			case 81:
+				if (_bGetIsStringIsNumber(token) == FALSE) {
+					wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
+					PutLogList(cTxt);
+					delete pContents;
+					delete pStrTok;
+					return FALSE;
+				}
+				m_pClientList[iClientH]->m_iRebirthLevel = atoi(token);
+				cReadModeA = 0;
+				break;
+
+			case 82:
+				if (_bGetIsStringIsNumber(token) == FALSE) {
+					wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
+					PutLogList(cTxt);
+					delete pContents;
+					delete pStrTok;
+					return FALSE;
+				}
+				m_pClientList[iClientH]->m_sRebirthStatus = atoi(token);
+				cReadModeA = 0;
+				break;
+
+			case 83:
+				if (_bGetIsStringIsNumber(token) == FALSE) {
+					wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
+					PutLogList(cTxt);
+					delete pContents;
+					delete pStrTok;
+					return FALSE;
+				}
+				m_pClientList[iClientH]->m_sRebirthEnabled = atoi(token);
+				cReadModeA = 0;
+				break;
+
+			case 84:
+				if (_bGetIsStringIsNumber(token) == FALSE) {
+					wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
+					PutLogList(cTxt);
+					delete pContents;
+					delete pStrTok;
+					return FALSE;
+				}
+				m_pClientList[iClientH]->m_iBackRebirthLevel = atoi(token);
+				cReadModeA = 0;
+				break;
+
+			case 85:
+				if (_bGetIsStringIsNumber(token) == FALSE) {
+					wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
+					PutLogList(cTxt);
+					delete pContents;
+					delete pStrTok;
+					return FALSE;
+				}
+				m_pClientList[iClientH]->m_iBackExp = atoi(token);
+				cReadModeA = 0;
+				break;
+
+			case 86:
+				if (_bGetIsStringIsNumber(token) == FALSE) {
+					wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
+					PutLogList(cTxt);
+					delete pContents;
+					delete pStrTok;
+					return FALSE;
+				}
+				m_pClientList[iClientH]->m_iBackStatsPoint = atoi(token);
+				cReadModeA = 0;
+				break;
+
+			case 87:
+				if (_bGetIsStringIsNumber(token) == FALSE) {
+					wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
+					PutLogList(cTxt);
+					delete pContents;
+					delete pStrTok;
+					return FALSE;
+				}
+				m_pClientList[iClientH]->m_iBackStr = atoi(token);
+				cReadModeA = 0;
+				break;
+
+			case 88:
+				if (_bGetIsStringIsNumber(token) == FALSE) {
+					wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
+					PutLogList(cTxt);
+					delete pContents;
+					delete pStrTok;
+					return FALSE;
+				}
+				m_pClientList[iClientH]->m_iBackVit = atoi(token);
+				cReadModeA = 0;
+				break;
+
+			case 89:
+				if (_bGetIsStringIsNumber(token) == FALSE) {
+					wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
+					PutLogList(cTxt);
+					delete pContents;
+					delete pStrTok;
+					return FALSE;
+				}
+				m_pClientList[iClientH]->m_iBackInt = atoi(token);
+				cReadModeA = 0;
+				break;
+
+			case 90:
+				if (_bGetIsStringIsNumber(token) == FALSE) {
+					wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
+					PutLogList(cTxt);
+					delete pContents;
+					delete pStrTok;
+					return FALSE;
+				}
+				m_pClientList[iClientH]->m_iBackDex = atoi(token);
+				cReadModeA = 0;
+				break;
+
+			case 91:
+				if (_bGetIsStringIsNumber(token) == FALSE) {
+					wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
+					PutLogList(cTxt);
+					delete pContents;
+					delete pStrTok;
+					return FALSE;
+				}
+				m_pClientList[iClientH]->m_iBackChr = atoi(token);
+				cReadModeA = 0;
+				break;
+
+			case 92:
+				if (_bGetIsStringIsNumber(token) == FALSE) {
+					wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
+					PutLogList(cTxt);
+					delete pContents;
+					delete pStrTok;
+					return FALSE;
+				}
+				m_pClientList[iClientH]->m_iBackMag = atoi(token);
+				cReadModeA = 0;
+				break;
+
+			case 93:
+				if (_bGetIsStringIsNumber(token) == FALSE) {
+					wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
+					PutLogList(cTxt);
+					delete pContents;
+					delete pStrTok;
+					return FALSE;
+				}
+				m_pClientList[iClientH]->m_iBackLevel = atoi(token);
+				cReadModeA = 0;
+				break;
 			}
 		}
 		else {
@@ -7400,6 +7588,20 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 			if (memcmp(token, "dead-penalty-time", 17) == 0) cReadModeA = 78;
 			if (memcmp(token, "party-id", 8) == 0)           cReadModeA = 79; // v2.06 12-4
 			if (memcmp(token, "gizon-item-upgade-left", 22) == 0) cReadModeA = 80; // v2.15 ÁöÁ¸¾ÆÀÌÅÛ¾÷±×·¹ÀÌµå
+
+			else if (memcmp(token, "character-rebirth-level", 23) == 0)        cReadModeA = 81;
+			else if (memcmp(token, "character-rebirth-status", 24) == 0)       cReadModeA = 82;
+			else if (memcmp(token, "character-rebirth-enabled", 25) == 0)      cReadModeA = 83;
+			else if (memcmp(token, "character-back-rebirth-level", 28) == 0)   cReadModeA = 84;
+			else if (memcmp(token, "character-back-exp", 18) == 0)             cReadModeA = 85;
+			else if (memcmp(token, "character-back-stats-point", 26) == 0)     cReadModeA = 86;
+			else if (memcmp(token, "character-back-str", 18) == 0)             cReadModeA = 87;
+			else if (memcmp(token, "character-back-vit", 18) == 0)             cReadModeA = 88;
+			else if (memcmp(token, "character-back-int", 18) == 0)             cReadModeA = 89;
+			else if (memcmp(token, "character-back-dex", 18) == 0)             cReadModeA = 90;
+			else if (memcmp(token, "character-back-chr", 18) == 0)             cReadModeA = 91;
+			else if (memcmp(token, "character-back-mag", 18) == 0)             cReadModeA = 92;
+			else if (memcmp(token, "character-back-level", 20) == 0)           cReadModeA = 93;
 
 			if (memcmp(token, "[EOF]", 5) == 0) goto DPDC_STOP_DECODING;
 		}
@@ -7928,6 +8130,45 @@ int CGame::_iComposePlayerDataFileContents(int iClientH, char * pData)
 	wsprintf(cTxt, "gizon-item-upgade-left = %d", m_pClientList[iClientH]->m_iGizonItemUpgradeLeft);
 	strcat(pData, cTxt);
 	strcat(pData,"\n");
+
+	wsprintf(cTxt, "character-rebirth-level = %d\n", m_pClientList[iClientH]->m_iRebirthLevel);
+	strcat(pData, cTxt);
+
+	wsprintf(cTxt, "character-rebirth-status = %d\n", m_pClientList[iClientH]->m_sRebirthStatus);
+	strcat(pData, cTxt);
+
+	wsprintf(cTxt, "character-rebirth-enabled = %d\n", m_pClientList[iClientH]->m_sRebirthEnabled);
+	strcat(pData, cTxt);
+
+	wsprintf(cTxt, "character-back-rebirth-level = %d\n", m_pClientList[iClientH]->m_iBackRebirthLevel);
+	strcat(pData, cTxt);
+
+	wsprintf(cTxt, "character-back-exp = %d\n", m_pClientList[iClientH]->m_iBackExp);
+	strcat(pData, cTxt);
+
+	wsprintf(cTxt, "character-back-stats-point = %d\n", m_pClientList[iClientH]->m_iBackStatsPoint);
+	strcat(pData, cTxt);
+
+	wsprintf(cTxt, "character-back-str = %d\n", m_pClientList[iClientH]->m_iBackStr);
+	strcat(pData, cTxt);
+
+	wsprintf(cTxt, "character-back-vit = %d\n", m_pClientList[iClientH]->m_iBackVit);
+	strcat(pData, cTxt);
+
+	wsprintf(cTxt, "character-back-int = %d\n", m_pClientList[iClientH]->m_iBackInt);
+	strcat(pData, cTxt);
+
+	wsprintf(cTxt, "character-back-dex = %d\n", m_pClientList[iClientH]->m_iBackDex);
+	strcat(pData, cTxt);
+
+	wsprintf(cTxt, "character-back-chr = %d\n", m_pClientList[iClientH]->m_iBackChr);
+	strcat(pData, cTxt);
+
+	wsprintf(cTxt, "character-back-mag = %d\n", m_pClientList[iClientH]->m_iBackMag);
+	strcat(pData, cTxt);
+
+	wsprintf(cTxt, "character-back-level = %d", m_pClientList[iClientH]->m_iBackLevel);
+	strcat(pData, cTxt);
 
 	strcat(pData,"\n\n");
 
@@ -9435,6 +9676,20 @@ void CGame::ChatMsgHandler(int iClientH, char * pData, DWORD dwMsgSize)
 			return;
 		}
 
+		if (memcmp(cp, "/reqrebirth", 11) == 0) 
+		{
+			if (!m_pClientList[iClientH]->m_bIsInitComplete) return;
+			requestRebirth(iClientH);
+			return;
+		}
+
+		if (memcmp(cp, "/reqswitch", 10) == 0)
+		{
+			if (!m_pClientList[iClientH]->m_bIsInitComplete) return;
+			switchRebirth(iClientH);
+			return;
+		}
+
 		if (memcmp(cp, "/fi ", 4) == 0) {
 			CheckAndNotifyPlayerConnection(iClientH, cp, dwMsgSize - 21);
 			return;
@@ -10145,10 +10400,10 @@ int CGame::iClientMotion_Attack_Handler(int iClientH, short sX, short sY, short 
 							iErr = 0;
 							m_Misc.GetPoint2(sX, sY, dX, dY, &tX, &tY, &iErr, i);
 							m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetOwner(&sOwner, &cOwnerType, tX, tY);
-							//iExp += iCalculateAttackEffect(sOwner, cOwnerType, iClientH, DEF_OWNERTYPE_PLAYER, tX, tY, wType, bNearAttack, bIsDash, TRUE); // 1
+							iExp += iCalculateAttackEffect(sOwner, cOwnerType, iClientH, DEF_OWNERTYPE_PLAYER, tX, tY, wType, bNearAttack, bIsDash, TRUE); // 1
 							if ((abs(tdX - dX) <= 1) && (abs(tdY - dY) <= 1)) {
 								m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetOwner(&sOwner, &cOwnerType, dX, dY);
-								//iExp += iCalculateAttackEffect(sOwner, cOwnerType, iClientH, DEF_OWNERTYPE_PLAYER, dX, dY, wType, bNearAttack, bIsDash, FALSE); // 0
+								iExp += iCalculateAttackEffect(sOwner, cOwnerType, iClientH, DEF_OWNERTYPE_PLAYER, dX, dY, wType, bNearAttack, bIsDash, FALSE); // 0
 							}
 						}
 					}
@@ -15340,6 +15595,7 @@ void CGame::SendNotifyMsg(int iFromH, int iToH, WORD wMsgType, DWORD sV1, DWORD 
 		iRet = m_pClientList[iToH]->m_pXSock->iSendMsg(cData, 8);
 		break;
 	
+	case DEF_NOTIFY_REBIRTH: // Centuu : nuevo mensaje
 	case DEF_NOTIFY_MAGICEFFECTOFF:
 	case DEF_NOTIFY_MAGICEFFECTON:
 		wp  = (WORD *)cp;  // ¸¶¹ý È¿°ú Á¾·ù 
@@ -15623,7 +15879,10 @@ void CGame::SendNotifyMsg(int iFromH, int iToH, WORD wMsgType, DWORD sV1, DWORD 
 		//MOG Fixes
 	case DEF_NOTIFY_STATECHANGE_FAILED:		// 2003-04-14 ÁöÁ¸ Æ÷ÀÎÆ®¸¦ ·¹º§ ¼öÁ¤¿¡ ½ÇÆÐ..korean buttplugs
 	case DEF_NOTIFY_SETTING_FAILED:
-		iRet = m_pClientList[iToH]->m_pXSock->iSendMsg(cData, 6);
+		ip = (int*)cp;
+		*ip = m_pClientList[iToH]->m_iLU_Pool;
+		cp += 4;
+		iRet = m_pClientList[iToH]->m_pXSock->iSendMsg(cData, 6+4);
 		break;
 
 	case DEF_NOTIFY_STATECHANGE_SUCCESS:	// 2003-04-14 ÁöÁ¸ Æ÷ÀÎÆ®¸¦ ·¹º§ ¼öÁ¤¿¡ ¼º°ø.. wtf korean junk
@@ -15640,7 +15899,11 @@ void CGame::SendNotifyMsg(int iFromH, int iToH, WORD wMsgType, DWORD sV1, DWORD 
 				cp++;
 			}
 
-			iRet = m_pClientList[iToH]->m_pXSock->iSendMsg(cData, 6 + DEF_MAXMAGICTYPE + DEF_MAXSKILLTYPE);
+			ip = (int*)cp;
+			*ip = m_pClientList[iToH]->m_iLU_Pool;
+			cp += 4;
+
+			iRet = m_pClientList[iToH]->m_pXSock->iSendMsg(cData, 6 + DEF_MAXMAGICTYPE + DEF_MAXSKILLTYPE + 4);
 		}
 		break;
 
@@ -15674,7 +15937,11 @@ void CGame::SendNotifyMsg(int iFromH, int iToH, WORD wMsgType, DWORD sV1, DWORD 
 		*ip  = m_pClientList[iToH]->m_iCharisma;
 		cp  += 4;
 
-		iRet = m_pClientList[iToH]->m_pXSock->iSendMsg(cData, 34);
+		ip = (int*)cp;
+		*ip = m_pClientList[iToH]->m_iLU_Pool;
+		cp += 4;
+
+		iRet = m_pClientList[iToH]->m_pXSock->iSendMsg(cData, 34+4);
 		break;
 
 	case DEF_NOTIFY_QUERY_DISMISSGUILDREQPERMISSION:
@@ -24072,7 +24339,7 @@ void CGame::StateChangeHandler(int iClientH, char * pData, DWORD dwMsgSize)
 	}
 
 	//Æ¯¼ºÄ¡ °ªÀÌ ·¹º§°ú ¸ÂÁö ¾Ê´Ù¸é ³»¸±¼ö ¾ø´Ù..
-	if(iOldStr +iOldVit +iOldDex +iOldInt +iOldMag +iOldChar != (179*3 + 70))
+	if(iOldStr +iOldVit +iOldDex +iOldInt +iOldMag +iOldChar != ((m_iPlayerMaxLevel-1)*3 + 70) + m_pClientList[iClientH]->getRebirthStats())
 	{
 		//ÇØÅ·ÀÌ´Ù... Å¬¶óÀÌ¾ðÆ®¿¡¼­ ¸øº¸³»°Ô µÇ¾î ÀÖ´Ù ±Ùµ¥ ¿Ô´Ù¸é ÇØÅ·...
 		return;
@@ -24322,10 +24589,10 @@ void CGame::LevelUpSettingsHandler(int iClientH, char * pData, DWORD dwMsgSize)
 		m_pClientList[iClientH]->m_iInt + m_pClientList[iClientH]->m_iMag + m_pClientList[iClientH]->m_iCharisma;
 
 	//(·¹º§ Æ¯¼º°ª + ·¹º§¾÷ Æ÷ÀÎÆ® > ·¹º§¾÷ Æ¯¼º°ª Á¤»óÄ¡)¸é ºñÁ¤»óÀÌ´Ù.. Ã³¸® ºÒ°¡.. ·¹º§¾÷ Æ÷ÀÎÆ®¸¦ Á¤»óÄ¡·Î ¸¶Ãß°í Ã³¸® ºÒ°¡..
-	if (iTotalSetting + m_pClientList[iClientH]->m_iLU_Pool -3 > ((m_pClientList[iClientH]->m_iLevel-1)*3 + 70))
+	if (iTotalSetting + m_pClientList[iClientH]->m_iLU_Pool -3 > ((m_pClientList[iClientH]->m_iLevel-1)*3 + 70) + m_pClientList[iClientH]->getRebirthStats())
 	{
 
-		m_pClientList[iClientH]->m_iLU_Pool = /*m_cLU_Str ÃÊ±â°ª*/3 + (m_pClientList[iClientH]->m_iLevel-1)*3 + 70 - iTotalSetting;
+		m_pClientList[iClientH]->m_iLU_Pool = /*m_cLU_Str ÃÊ±â°ª*/(3 + (m_pClientList[iClientH]->m_iLevel-1)*3 + 70 - iTotalSetting) + m_pClientList[iClientH]->getRebirthStats();
 
 		//iTotalSetting°ªÀÌ Àß¸øµÈ °æ¿ì´Ù...
 		if(m_pClientList[iClientH]->m_iLU_Pool < 3)
@@ -24335,7 +24602,7 @@ void CGame::LevelUpSettingsHandler(int iClientH, char * pData, DWORD dwMsgSize)
 	}
 
 	//(·¹º§ Æ¯¼º°ª + ·¹º§¾÷ ½ÃÅ³ Æ÷ÀÎÆ® ÁD > ·¹º§¾÷ Æ¯¼º°ª Á¤»óÄ¡)ÀÌ¸é Ã³¸® ºÒ°¡..
-	if (iTotalSetting + (cStr + cVit + cDex + cInt + cMag + cChar) > ((m_pClientList[iClientH]->m_iLevel-1)*3 + 70)) 
+	if (iTotalSetting + (cStr + cVit + cDex + cInt + cMag + cChar) > ((m_pClientList[iClientH]->m_iLevel-1)*3 + 70) + m_pClientList[iClientH]->getRebirthStats())
 	{
 		SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SETTING_FAILED, NULL, NULL, NULL, NULL);
 		return;
@@ -45851,6 +46118,10 @@ int iTotalPartyMembers;
 				iH = m_stPartyInfo[m_pClientList[iClientH]->m_iPartyID].iIndex[i];
 				if ((m_pClientList[iH] != NULL) && (m_pClientList[iH]->m_bSkillUsingStatus[19] != 1) && (m_pClientList[iH]->m_iHP > 0)) { // Is player alive ??
 					if((m_pClientList[iH]->m_iStatus & 0x10000) != 0)  iUnitValue *= 3;
+					if (m_pClientList[iH]->m_sRebirthStatus == 1 && m_pClientList[iH]->m_iLevel != m_iPlayerMaxLevel && m_pClientList[iH]->m_iRebirthLevel > 0)
+					{
+						iUnitValue *= pow(0.80f, m_pClientList[iH]->m_iRebirthLevel);
+					}
 					m_pClientList[iH]->m_iExpStock += iUnitValue;  
 				}
 			}
@@ -45859,6 +46130,10 @@ int iTotalPartyMembers;
 	else {
 		if ((m_pClientList[iClientH] != NULL) && (m_pClientList[iClientH]->m_bSkillUsingStatus[19] != 1) && (m_pClientList[iClientH]->m_iHP > 0)) { // Is player alive ??
 			if((m_pClientList[iClientH]->m_iStatus & 0x10000) != 0)  iExp *= 3;
+			if (m_pClientList[iClientH]->m_sRebirthStatus == 1 && m_pClientList[iClientH]->m_iLevel != m_iPlayerMaxLevel && m_pClientList[iClientH]->m_iRebirthLevel > 0)
+			{
+				iExp *= pow(0.80f, m_pClientList[iClientH]->m_iRebirthLevel);
+			}
 			m_pClientList[iClientH]->m_iExpStock += iExp;
 		}
 	}
@@ -57132,7 +57407,7 @@ void CGame::RequestEnchantUpgradeHandler(int client, DWORD type, DWORD lvl, int 
 	auto& player = m_pClientList[client];
 	if (player == NULL || type == NULL) return;
 
-	if (lvl < 2 || lvl >= 17) return; // nivel mayor a 1 y menor a 17
+	if (lvl >= 17) return; // nivel mayor a 1 y menor a 17
 
 	int req = GetRequiredLevelForUpgrade(lvl);
 
@@ -57238,11 +57513,69 @@ void CGame::RequestEnchantUpgradeHandler(int client, DWORD type, DWORD lvl, int 
 			}
 		}
 		break;
+	case UPGRADEALL_SHARDS:
+		for (int i = 0; i < 17; i++)
+		{
+			// descuenta los shards necesarios
+			if (player->m_pShards[type][i] != NULL)
+			{
+				while (player->m_pShards[type][i]->iCount >= req)
+				{
+					player->m_pShards[type][i]->iCount -= req;
+					SendNotifyMsg(NULL, client, msg_shard, type, i + 1, player->m_pShards[type][i]->iCount, player->m_pShards[type][i]->cName, NULL, NULL, NULL, NULL, NULL, NULL, player->m_pShards[type][i]->cDesc);
+
+					// agrego uno al nivel siguiente
+					if (player->m_pShards[type][i + 1] == NULL)
+					{
+						player->m_pShards[type][i + 1] = new class CEnchanting;
+
+						strcpy(player->m_pShards[type][i + 1]->cName, GetShardName(type));
+						strcpy(player->m_pShards[type][i + 1]->cDesc, GetShardDesc(type));
+						player->m_pShards[type][i + 1]->dwType = type;
+						player->m_pShards[type][i + 1]->dwValue = i + 2;
+					}
+
+					player->m_pShards[type][i + 1]->iCount++;
+
+					SendNotifyMsg(NULL, client, msg_shard, type, i + 2, player->m_pShards[type][i + 1]->iCount, player->m_pShards[type][i + 1]->cName, NULL, NULL, NULL, NULL, NULL, NULL, player->m_pShards[type][i + 1]->cDesc);
+				}
+			}
+		}
+		break;
+	case UPGRADEALL_FRAGMENTS:
+		for (int i = 0; i < 17; i++)
+		{
+			// descuenta los fragments necesarios
+			if (player->m_pFragments[type][i] != NULL)
+			{
+				while (player->m_pFragments[type][i]->iCount >= req)
+				{
+					player->m_pFragments[type][i]->iCount -= req;
+					SendNotifyMsg(NULL, client, msg_fragment, type, i + 1, player->m_pFragments[type][i]->iCount, player->m_pFragments[type][i]->cName, NULL, NULL, NULL, NULL, NULL, NULL, player->m_pFragments[type][i]->cDesc);
+
+					// agrego uno al nivel siguiente
+					if (player->m_pFragments[type][i + 1] == NULL)
+					{
+						player->m_pFragments[type][i + 1] = new class CEnchanting;
+
+						strcpy(player->m_pFragments[type][i + 1]->cName, GetFragmentName(type));
+						strcpy(player->m_pFragments[type][i + 1]->cDesc, GetFragmentDesc(type));
+						player->m_pFragments[type][i + 1]->dwType = type;
+						player->m_pFragments[type][i + 1]->dwValue = i + 2;
+					}
+
+					player->m_pFragments[type][i + 1]->iCount++;
+
+					SendNotifyMsg(NULL, client, msg_fragment, type, i + 2, player->m_pFragments[type][i + 1]->iCount, player->m_pFragments[type][i + 1]->cName, NULL, NULL, NULL, NULL, NULL, NULL, player->m_pFragments[type][i + 1]->cDesc);
+				}
+			}
+		}
+		break;
 	}
 }
 int CGame::GetRequiredLevelForUpgrade(DWORD value)
 {
-	if (value >= 1 && value <= 5)
+	if (value <= 5)
 	{
 		return 4;
 	}
@@ -57509,4 +57842,346 @@ char* CGame::GetFragmentName(DWORD dwType)
 	}
 
 	return "";
+}
+
+//HeatoN rebirth - adaptado by Centu
+void CGame::requestRebirth(int client)
+{
+	auto player = m_pClientList[client];
+	if (!player) return;
+
+	//if (!player->IsInMap("Whouse")) return;
+	int cost = player->m_iRebirthLevel * 5;
+
+	if (player->m_sRebirthEnabled == 1) return;
+
+	if (player->m_iLevel != DEF_PLAYERMAXLEVEL)
+	{
+		ShowClientMsg(client, "You need to be level %d to be reborn!");
+		return;
+	}
+
+	auto nextlevel = player->m_iRebirthLevel + 1;
+
+	if (nextlevel > 20)
+	{
+		ShowClientMsg(client, "Error. The maximum rebirth level has been reached.");
+		return;
+	}
+
+	if (cost != 0)
+	{
+		if (player->m_iGizonItemUpgradeLeft < cost)
+		{
+			char notice[100];
+			wsprintf(notice, "Error! You need %d majestic points", cost);
+			ShowClientMsg(client, notice);
+			return;
+		}
+
+
+		player->m_iGizonItemUpgradeLeft -= cost;
+		SendNotifyMsg(NULL, client, DEF_NOTIFY_GIZONITEMUPGRADELEFT, player->m_iGizonItemUpgradeLeft, NULL, NULL, NULL);
+	}
+
+
+	unequipItems(client);
+
+	copyStats(client);
+	copyLevel(client);
+	copyExp(client);
+	copyStatsPoints(client);
+
+	player->m_iExp = 0;
+	player->m_iLevel = 1;
+	player->m_iNextLevelExp = m_iLevelExpTable[player->m_iLevel + 1];
+
+	auto war = player->m_iStr > player->m_iMag;
+
+	if (war)
+	{
+		player->m_iStr = 14;
+		player->m_iVit = 12;
+		player->m_iInt = 10;
+		player->m_iMag = 10;
+		player->m_iDex = 14;
+		player->m_iCharisma = 10;
+	}
+	else
+	{
+		player->m_iStr = 10;
+		player->m_iVit = 12;
+		player->m_iInt = 14;
+		player->m_iMag = 14;
+		player->m_iDex = 10;
+		player->m_iCharisma = 10;
+	}
+
+	calculatePoints(client);
+
+	player->m_iBackRebirthLevel = player->m_iRebirthLevel;
+
+	player->m_iRebirthLevel = nextlevel;
+	player->m_sRebirthStatus = 1;
+	player->m_sRebirthEnabled = 1;
+
+	int iStats = (player->m_iStr + player->m_iDex + player->m_iVit + player->m_iInt + player->m_iMag + player->m_iCharisma);
+
+	/*m_pClientList[iClientH]->m_iLU_Pool = m_pClientList[iClientH]->m_iLevel * 3 - (iStats - 70);*/
+
+	int pool = player->m_iLevel * 3 - (iStats - 70);
+	pool = pool + player->getRebirthStats();
+	player->m_iLU_Pool = pool;
+
+	//SendCommand(client, "/statspoints", m_pClientList[client]->m_iLU_Pool);
+	SendNotifyMsg(NULL, client, DEF_NOTIFY_SETTING_SUCCESS, NULL, NULL, NULL, NULL);
+	SendNotifyMsg(NULL, client, DEF_NOTIFY_EXP, NULL, NULL, NULL, NULL);
+	SendNotifyMsg(NULL, client, DEF_NOTIFY_HP, NULL, NULL, NULL, NULL);
+	SendNotifyMsg(NULL, client, DEF_NOTIFY_MP, NULL, NULL, NULL, NULL);
+	SendNotifyMsg(NULL, client, DEF_NOTIFY_SP, NULL, NULL, NULL, NULL);
+	SendNotifyMsg(NULL, client, DEF_NOTIFY_REBIRTH, player->m_sRebirthEnabled, player->m_iRebirthLevel, player->m_sRebirthStatus, NULL);
+
+	//notifyLevelChange(client);
+	bCheckMagicInt(client);
+	SendNotifyMsg(NULL, client, DEF_NOTIFY_STATECHANGE_SUCCESS, NULL, NULL, NULL, NULL);
+
+	AutoSkill(client);
+
+	g_login->LocalSavePlayerData(client);
+}
+
+void CGame::switchRebirth(int client)
+{
+	auto player = m_pClientList[client];
+	if (!player) return;
+
+	//if (!player->IsInMap("Whouse")) return;
+
+	if (player->m_sRebirthEnabled == 0) return;
+
+	int goldcost = 200000 * (player->m_iRebirthLevel);
+	if (goldcost > 1000000) goldcost = 1000000;
+
+	if (dwGetItemCount(client, "Gold") < goldcost)
+	{
+		char notice[100];
+		wsprintf(notice, "Error! You need %d gold", goldcost);
+		ShowClientMsg(client, notice);
+		return;
+	}
+
+	SetItemCount(client, "Gold", dwGetItemCount(client, "Gold") - goldcost);
+
+	if (player->m_iLevel >= 1 && player->m_iLevel <= m_iPlayerMaxLevel - 1 && player->m_sRebirthStatus == 1 && player->m_sRebirthEnabled == 1)
+	{
+		player->m_sRebirthStatus = 0;
+	}
+	else
+	{
+		player->m_sRebirthStatus = 1;
+	}
+
+	int tmpBackLevel = player->m_iLevel;
+	player->m_iLevel = player->m_iBackLevel;
+	player->m_iBackLevel = tmpBackLevel;
+
+	int tmpBackRebirthLevel = player->m_iRebirthLevel;
+	player->m_iRebirthLevel = player->m_iBackRebirthLevel;
+	player->m_iBackRebirthLevel = tmpBackRebirthLevel;
+
+	restoreStats(client);
+
+	int tmpBackStats = player->m_iLU_Pool;
+	player->m_iLU_Pool = player->m_iBackStatsPoint;
+	player->m_iBackStatsPoint = tmpBackStats;
+
+	DWORD tmpBackExp = player->m_iExp;
+	player->m_iExp = player->m_iBackExp;
+	player->m_iBackExp = tmpBackExp;
+
+	calculatePoints(client);
+
+	SendNotifyMsg(NULL, client, DEF_NOTIFY_HP, NULL, NULL, NULL, NULL);
+	SendNotifyMsg(NULL, client, DEF_NOTIFY_MP, NULL, NULL, NULL, NULL);
+	SendNotifyMsg(NULL, client, DEF_NOTIFY_SP, NULL, NULL, NULL, NULL);
+
+	//notifyLevelChange(client);
+
+	calcStatsPoints(client);
+
+	m_pClientList[client]->m_iNextLevelExp = m_iLevelExpTable[m_pClientList[client]->m_iLevel + 1];
+
+	unequipItems(client);
+	bCheckMagicInt(client);
+	AutoSkill(client);
+
+	g_login->LocalSavePlayerData(client);
+}
+
+// Centuu: nuevo m�todo para recalcular skills
+void CGame::AutoSkill(int iClientH)
+{
+	for (int i = 0; i < DEF_MAXSKILLTYPE; i++)
+	{
+		switch (i) {
+		case 0:  // Mining
+		case 5:  // Hand-Attack
+		case 13: // Manufacturing
+			m_pClientList[iClientH]->m_cSkillMastery[i] = ((m_pClientList[iClientH]->m_iStr + m_pClientList[iClientH]->m_iAngelicStr) * 2);
+			break;
+
+		case 3: // Magic-Resistance
+			m_pClientList[iClientH]->m_cSkillMastery[i] = (m_pClientList[iClientH]->m_iLevel * 2);
+			break;
+
+		case 4:  // Magic
+		case 18: // Crafting
+		case 21: // Staff-Attack
+			m_pClientList[iClientH]->m_cSkillMastery[i] = ((m_pClientList[iClientH]->m_iMag + m_pClientList[iClientH]->m_iAngelicMag) * 2);
+			break;
+
+		case 1:  // Fishing
+		case 6:  // Archery
+		case 7:  // Short-Sword
+		case 8:  // Long-Sword
+		case 9:  // Fencing 
+		case 10: // Axe-Attack
+		case 11: // Shield        	
+		case 14: // Hammer 
+			m_pClientList[iClientH]->m_cSkillMastery[i] = ((m_pClientList[iClientH]->m_iDex + m_pClientList[iClientH]->m_iAngelicDex) * 2);
+			break;
+
+		case 2:	 // Farming
+		case 12: // Alchemy
+		case 15: // ����óġ
+		case 19: // Pretend-Corpse
+		case 20: // Enchanting
+			m_pClientList[iClientH]->m_cSkillMastery[i] = ((m_pClientList[iClientH]->m_iInt + m_pClientList[iClientH]->m_iAngelicInt) * 2);
+			break;
+
+		case 23: // Poison-Resistance
+			m_pClientList[iClientH]->m_cSkillMastery[i] = (m_pClientList[iClientH]->m_iVit * 2);
+			break;
+
+		default:
+			m_pClientList[iClientH]->m_cSkillMastery[i] = 0;
+			break;
+		}
+
+		m_pClientList[iClientH]->m_iSkillSSN[i] = 0;
+		SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SKILL, i, m_pClientList[iClientH]->m_cSkillMastery[i], NULL, NULL);
+	}
+}
+
+void CGame::calcStatsPoints(int client)
+{
+	auto player = m_pClientList[client];
+	if (!player) return;
+
+	int iStats = (player->m_iStr + player->m_iDex + player->m_iVit + player->m_iInt + player->m_iMag + player->m_iCharisma);
+
+	int pool = player->m_iLevel * 3 - (iStats - 70);
+	pool = pool + player->getRebirthStats();
+	player->m_iLU_Pool = pool;
+
+	player->m_iLU_Pool = player->m_iLU_Pool - 3;
+
+	//SendCommand(client, "/statspoints", m_pClientList[client]->m_iLU_Pool);
+	SendNotifyMsg(NULL, client, DEF_NOTIFY_SETTING_SUCCESS, NULL, NULL, NULL, NULL);
+}
+
+void CGame::unequipItems(int client)
+{
+	auto player = m_pClientList[client];
+	if (!player) return;
+
+	for (int i = 0; i < DEF_MAXITEMS; i++)
+	{
+		if (player->m_pItemList[i] != NULL)
+		{
+			if (player->m_bIsItemEquipped[i] == TRUE)
+			{
+				SendNotifyMsg(NULL, client, DEF_NOTIFY_ITEMRELEASED, player->m_pItemList[i]->m_cEquipPos, i, NULL, NULL);
+				ReleaseItemHandler(client, i, TRUE);
+			}
+		}
+	}
+}
+
+void CGame::copyStats(int client)
+{
+	auto player = m_pClientList[client];
+	if (!player) return;
+
+	player->m_iBackStr = player->m_iStr;
+	player->m_iBackDex = player->m_iDex;
+	player->m_iBackInt = player->m_iInt;
+	player->m_iBackVit = player->m_iVit;
+	player->m_iBackMag = player->m_iMag;
+	player->m_iBackChr = player->m_iCharisma;
+}
+
+void CGame::restoreStats(int client)
+{
+	int tmpStr, tmpMag, tmpVit, tmpDex, tmpInt, tmpChr;
+
+	auto player = m_pClientList[client];
+	if (!player) return;
+
+	tmpStr = player->m_iStr;
+	tmpDex = player->m_iDex;
+	tmpInt = player->m_iInt;
+	tmpVit = player->m_iVit;
+	tmpMag = player->m_iMag;
+	tmpChr = player->m_iCharisma;
+
+	player->m_iStr = player->m_iBackStr;
+	player->m_iDex = player->m_iBackDex;
+	player->m_iInt = player->m_iBackInt;
+	player->m_iVit = player->m_iBackVit;
+	player->m_iMag = player->m_iBackMag;
+	player->m_iCharisma = player->m_iBackChr;
+
+	player->m_iBackStr = tmpStr;
+	player->m_iBackDex = tmpDex;
+	player->m_iBackInt = tmpInt;
+	player->m_iBackVit = tmpVit;
+	player->m_iBackMag = tmpMag;
+	player->m_iBackChr = tmpChr;
+
+	SendNotifyMsg(NULL, client, DEF_NOTIFY_SETTING_SUCCESS, NULL, NULL, NULL, NULL);
+}
+
+void CGame::copyLevel(int client)
+{
+	auto player = m_pClientList[client];
+	if (!player) return;
+
+	player->m_iBackLevel = player->m_iLevel;
+}
+
+void CGame::copyExp(int client)
+{
+	auto player = m_pClientList[client];
+	if (!player) return;
+
+	player->m_iBackExp = player->m_iExp;
+}
+
+void CGame::copyStatsPoints(int client)
+{
+	auto player = m_pClientList[client];
+	if (!player) return;
+
+	player->m_iBackStatsPoint = player->m_iLU_Pool;
+}
+
+void CGame::calculatePoints(int client)
+{
+	auto player = m_pClientList[client];
+	if (!player) return;
+
+	player->m_iHP = iGetMaxHP(client);
+	player->m_iMP = iGetMaxMP(client);
+	player->m_iSP = iGetMaxSP(client);
 }

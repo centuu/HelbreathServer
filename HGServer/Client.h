@@ -144,6 +144,23 @@ public:
 	void read_mobs_data();
 	void save_mobs_data();
 
+	//HeatoN rebirth 2024
+	int m_iRebirthLevel;
+	int m_sRebirthStatus;
+	short m_sRebirthEnabled;
+	int m_iBackRebirthLevel;
+
+	int getRebirthStats();
+	DWORD m_iBackExp;
+	int m_iBackStatsPoint;
+	int m_iBackStr;
+	int m_iBackVit;
+	int m_iBackInt;
+	int m_iBackDex;
+	int m_iBackChr;
+	int m_iBackMag;
+	int m_iBackLevel;
+
 	DWORD m_iRewardGold;
 	int  m_iEnemyKillCount, m_iPKCount;
 	int  m_iCurWeightLoad;		// 현재 총 소지품 무게 

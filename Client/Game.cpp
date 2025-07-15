@@ -239,6 +239,11 @@ CGame::CGame()
 	for (i = 0; i < DEF_MAXMENUITEMS; i++)
 		m_pItemForSaleList[i] = NULL;
 
+	//HeatoN rebirth
+	m_iRebirthLevel = 0;
+	m_sRebirthStatus = 0;
+	m_sRebirthEnabled = 0;
+
 	// CLEROTh - INIT DIALOG BOXES
 
 	//Character-Info Dialog(F5)
@@ -523,6 +528,12 @@ CGame::CGame()
 	m_stDialogBoxInfo[51].sY = 57 + SCREENY;
 	m_stDialogBoxInfo[51].sSizeX = 258;
 	m_stDialogBoxInfo[51].sSizeY = 339;
+
+	//Rebirth
+	m_stDialogBoxInfo[52].sX = 160;
+	m_stDialogBoxInfo[52].sY = 120;
+	m_stDialogBoxInfo[52].sSizeX = 458;
+	m_stDialogBoxInfo[52].sSizeY = 399;
 
 	// Enchanting Bag
 	m_stDialogBoxInfo[54].sX = 140;
@@ -4316,7 +4327,9 @@ BOOL CGame::_bCheckDlgBoxClick(short msX, short msY)
 			case 51:
 				DlgBoxClick_CMDHallMenu(msX, msY);
 				break;
-
+			case 52:
+				DlgBoxClick_Rebirth(msX, msY);
+				break;
 			case 58:
 				DlgBoxClick_Enchanting(msX, msY);
 				break;
@@ -16093,6 +16106,7 @@ int CGame::_iCheckDlgBoxFocus(short msX, short msY, char cButtonSide)
 				case 69:
 				case 44:
 				case 49:
+				case 52:
 				case 54:
 				case 58:
 					m_stMCursor.cSelectedObjectType	= DEF_SELECTEDOBJTYPE_DLGBOX;
@@ -16747,6 +16761,9 @@ void CGame::DrawDialogBoxs(short msX, short msY, short msZ, char cLB)
 		case 51: // Gail
 			DrawDialogBox_CMDHallMenu(msX, msY);
 			break;
+		case 52:
+			DrawDialogBox_Rebirth(msX, msY);
+			break;
 		case 58:
 			DrawDialogBox_Enchanting(msX, msY);
 			break;
@@ -16858,6 +16875,8 @@ void CGame::EnableDialogBox(int iBoxID, int cType, int sV1, int sV2, char * pStr
 		if (m_bIsDialogEnabled[12] == FALSE)
 		{	m_stDialogBoxInfo[12].sX = m_stDialogBoxInfo[1].sX + 20;
 			m_stDialogBoxInfo[12].sY = m_stDialogBoxInfo[1].sY + 20;
+
+			m_iLU_Point = (m_iLevel*3 - ((m_iStr + m_iVit + m_iDex + m_iInt + m_iMag + m_iCharisma) - 70) - 3) + getRebirthStats();
 			m_stDialogBoxInfo[12].sV1 = m_iLU_Point;
 		}
 		break;
@@ -16974,6 +16993,7 @@ void CGame::EnableDialogBox(int iBoxID, int cType, int sV1, int sV2, char * pStr
 
 	case 15:
 	case 48: // mob counter
+	case 52:
 		break;
 
 	case 24:
@@ -25318,7 +25338,7 @@ void CGame::OnKeyUp(WPARAM wParam)
 		//{	DisableDialogBox(35);
 		//	DisableDialogBox(18);
 		//}
-		UseShortCut(1);
+		EnableDialogBox(52, NULL, NULL, NULL); //UseShortCut(1);
 		break;
 
 	case VK_UP:
@@ -26438,7 +26458,7 @@ void CGame::NotifyMsgHandler(char * pData)
 		m_iInt += m_cLU_Int;
 		m_iMag += m_cLU_Mag;
 		m_iCharisma += m_cLU_Char;
-		m_iLU_Point = m_iLevel*3 - ((m_iStr + m_iVit + m_iDex + m_iInt + m_iMag + m_iCharisma) - 70) - 3;
+		m_iLU_Point = (m_iLevel * 3 - ((m_iStr + m_iVit + m_iDex + m_iInt + m_iMag + m_iCharisma) - 70) - 3) + getRebirthStats();
 		m_cLU_Str = m_cLU_Vit = m_cLU_Dex = m_cLU_Int = m_cLU_Mag = m_cLU_Char = 0;
 		AddEventList( "Your stat has been changed.", 10 ); // "Your stat has been changed."
 		break;
@@ -26449,14 +26469,14 @@ void CGame::NotifyMsgHandler(char * pData)
 
 	case DEF_NOTIFY_STATECHANGE_FAILED:		// 0x0BB6
 		m_cLU_Str = m_cLU_Vit = m_cLU_Dex = m_cLU_Int = m_cLU_Mag = m_cLU_Char = 0;
-		m_iLU_Point = m_iLevel*3 - ((m_iStr + m_iVit + m_iDex + m_iInt + m_iMag + m_iCharisma) - 70) - 3;
+		m_iLU_Point = (m_iLevel * 3 - ((m_iStr + m_iVit + m_iDex + m_iInt + m_iMag + m_iCharisma) - 70) - 3) + getRebirthStats();
 		AddEventList( "Your stat has not been changed.", 10 );
 		break;
 
 	case DEF_NOTIFY_SETTING_FAILED: // 0x0BB4 -  Case BB4 of switch 00454077
 		AddEventList( "Your stat has not been changed.", 10 );
 		m_cLU_Str = m_cLU_Vit = m_cLU_Dex = m_cLU_Int = m_cLU_Mag = m_cLU_Char = 0;
-		m_iLU_Point = m_iLevel*3 - ((m_iStr + m_iVit + m_iDex + m_iInt + m_iMag + m_iCharisma) - 70) - 3;
+		m_iLU_Point = (m_iLevel * 3 - ((m_iStr + m_iVit + m_iDex + m_iInt + m_iMag + m_iCharisma) - 70) - 3) + getRebirthStats();
 		break;
 
 	// CLEROTH - LU
@@ -27653,6 +27673,10 @@ NMH_LOOPBREAK2:;
 
 	case DEF_NOTIFY_MAGICEFFECTON:
 		NotifyMsg_MagicEffectOn(pData);
+		break;
+
+	case DEF_NOTIFY_REBIRTH:
+		NotifyMsg_Rebirth(pData);
 		break;
 
 	case DEF_NOTIFY_CANNOTITEMTOBANK:
@@ -32692,7 +32716,9 @@ void CGame::DrawDialogBox_Character(short msX, short msY)
 
 	int iTemp;
 	// Level
-	wsprintf(G_cTxt, "%d", m_iLevel);
+	if (m_iRebirthLevel > 0)
+		wsprintf(G_cTxt, "%d (+%d)", m_iLevel, m_iRebirthLevel);
+	else wsprintf(G_cTxt, "%d", m_iLevel);
 	PutAlignedString(sX+180, sX+250, sY + 106, G_cTxt, 45,25,25);
 	// Exp
 	DisplayCommaNumber_G_cTxt(m_iExp);
@@ -39052,7 +39078,10 @@ void CGame::NotifyMsg_LevelUp(char * pData)
 	cp  += 4;
 
 	// CLEROTH - LU
-	m_iLU_Point = m_iLevel*3 - ((m_iStr + m_iVit + m_iDex + m_iInt + m_iMag + m_iCharisma) - 70) - 3;
+	ip = (int*)cp;
+	m_iLU_Point = *ip; //m_iLevel*3 - ((m_iStr + m_iVit + m_iDex + m_iInt + m_iMag + m_iCharisma) - 70) - 3;
+	cp += 4;
+
 	m_cLU_Str = m_cLU_Vit = m_cLU_Dex = m_cLU_Int = m_cLU_Mag = m_cLU_Char = 0;
 
 	wsprintf(cTxt, NOTIFYMSG_LEVELUP1, m_iLevel);// "Level up!!! Level %d!"
@@ -39121,7 +39150,9 @@ void CGame::NotifyMsg_SettingSuccess(char * pData)
 	wsprintf(cTxt, "Your stat has been changed.");
 	AddEventList(cTxt, 10);
 	// CLEROTH - LU
-	m_iLU_Point = m_iLevel*3 - ((m_iStr + m_iVit + m_iDex + m_iInt + m_iMag + m_iCharisma) - 70) - 3;
+	ip = (int*)cp;
+	m_iLU_Point = *ip; //m_iLevel*3 - ((m_iStr + m_iVit + m_iDex + m_iInt + m_iMag + m_iCharisma) - 70) - 3;
+	cp += 4;
 	m_cLU_Str = m_cLU_Vit = m_cLU_Dex = m_cLU_Int = m_cLU_Mag = m_cLU_Char = 0;
 }
 
@@ -39327,6 +39358,25 @@ void CGame::NotifyMsg_MagicEffectOn(char * pData)
 		AddEventList(NOTIFYMSG_MAGICEFFECT_ON13, 10);
 		break;
 	}
+}
+
+void CGame::NotifyMsg_Rebirth(char* pData)
+{
+	char* cp;
+	DWORD* dwp;
+	WORD* wp;
+	short  m_sRebirthEnabled, m_sRebirthStatus;
+	int *ip, m_iRebirthLevel;
+	cp = (char*)(pData + DEF_INDEX2_MSGTYPE + 2);
+	wp = (WORD*)cp;
+	m_sRebirthEnabled = (short)*wp;
+	cp += 2;
+	dwp = (DWORD*)cp;
+	m_iRebirthLevel = (int)*dwp;
+	cp += 4;
+	dwp = (DWORD*)cp;
+	m_sRebirthStatus = (short)*dwp;
+	cp += 4;
 }
 
 void CGame::NotifyMsg_MagicStudyFail(char * pData)
@@ -43387,10 +43437,7 @@ void CGame::DlgBoxClick_EnchantingUpgradeAll(short msX, short msY)
 	sY = m_stDialogBoxInfo[49].sY;
 	if ((msX >= sX + 30) && (msX <= sX + 30 + DEF_BTNSZX) && (msY >= sY + 55) && (msY <= sY + 55 + DEF_BTNSZY))
 	{   // yes
-		for (int i = 0; i < 17; i++)
-		{
-			bSendCommand(MSGID_COMMAND_COMMON, DEF_COMMONTYPE_UPGRADEENCHANT, NULL, m_stDialogBoxInfo[49].sV1, i, m_stDialogBoxInfo[49].cMode + 10, NULL);
-		}
+		bSendCommand(MSGID_COMMAND_COMMON, DEF_COMMONTYPE_UPGRADEENCHANT, NULL, m_stDialogBoxInfo[49].sV1, NULL, m_stDialogBoxInfo[49].cMode + 100, NULL);
 		DisableDialogBox(49);
 		PlaySound('E', 14, 5);
 	}
@@ -44307,5 +44354,108 @@ void CGame::DlgBoxClick_EnchantingBag(int msX, int msY)
 			addx = 25;
 		}
 		break;
+	}
+}
+
+//HeatoN rebirth
+int CGame::getRebirthStats()
+{
+	int result = 0;
+	if (m_iRebirthLevel != 0)
+	{
+		result = m_iRebirthLevel * 3;
+	}
+
+	return result;
+}
+
+void CGame::SendChat(char* str)
+{
+	bSendCommand(MSGID_COMMAND_CHATMSG, NULL, NULL, NULL, NULL, NULL, str);
+}
+
+void CGame::DrawDialogBox_Rebirth(int msX, int msY)
+{
+	int i, sX, sY;
+	char cItemColor, cStr1[120], cStr2[120], cStr3[120], cStr4[120], cStr5[120], cStr6[120];
+	DWORD dwTime = timeGetTime();
+	int iLoc, iLenSize, iEntry = 0;
+	char cTxt[3], cDesc[64];
+
+	sX = m_stDialogBoxInfo[52].sX;
+	sY = m_stDialogBoxInfo[52].sY;
+
+	short limitX, limitY, addx = 0, addy = 0;
+
+	limitX = sX + m_stDialogBoxInfo[52].sSizeX;
+	limitY = sY + m_stDialogBoxInfo[52].sSizeY;
+	m_DDraw.DrawItemShadowBox(sX, sY, limitX, limitY);
+	m_DDraw.DrawItemShadowBox(sX, sY, limitX, limitY);
+
+	m_DDraw.DrawItemShadowBox(sX, sY, limitX, sY + 30);
+	m_DDraw.DrawItemShadowBox(sX, sY, limitX, sY + 30);
+	PutString_SprFont2(sX + 200, sY + 5, "Rebirth", 255, 255, 255);
+
+	PutString2(sX + 30, sY + 40, " The rebirth system grants you 3 additional stat points for every time", 255, 255, 255);
+	PutString2(sX + 30, sY + 55, "you go through rebirth.", 255, 255, 255);
+	PutString2(sX + 30, sY + 70, " Starting a new rebirth will enter Rebirth Mode, granting you one", 255, 255, 255);
+	PutString2(sX + 30, sY + 85, "Rebirth Level and resetting you back to Level 1.", 255, 255, 255);
+	PutString2(sX + 30, sY + 100, " You will not lose your skills or spells, but you will be unable to use them", 255, 255, 255);
+	PutString2(sX + 30, sY + 115, "until you have enough stats.", 255, 255, 255);
+	PutString2(sX + 30, sY + 130, " While in Rebirth Mode, you will have a -20% experience penalty for", 255, 255, 255);
+	wsprintf(G_cTxt, "each Rebirth Level until you reach Level %d again.", iMaxLevel);
+	PutString2(sX + 30, sY + 145, G_cTxt, 255, 255, 255);
+	wsprintf(G_cTxt, " You can toggle between Rebirth Mode and Nomal Mode (Level %d) at", iMaxLevel);
+	PutString2(sX + 30, sY + 160, G_cTxt, 255, 255, 255);
+	PutString2(sX + 30, sY + 175, "any time for a small price.", 255, 255, 255);
+
+	PutString2(sX + 30, sY + 210, "Requirements:", 250, 250, 0);
+	wsprintf(G_cTxt, "Level %d", iMaxLevel);
+	if (m_iLevel < iMaxLevel) PutString2(sX + 40, sY + 225, G_cTxt, 250, 0, 0);
+	else PutString2(sX + 40, sY + 225, G_cTxt, 0, 250, 0);
+	int iMaxGizon = 5 * (m_iRebirthLevel + 1);
+	wsprintf(G_cTxt, "%d Majestic(s) (5 per Rebirth Level)", iMaxGizon);
+	if (m_iGizonItemUpgradeLeft < iMaxGizon) PutString2(sX + 40, sY + 240, G_cTxt, 250, 0, 0);
+	else PutString2(sX + 40, sY + 240, G_cTxt, 0, 250, 0);
+	DWORD dwMaxGold = 200000 * (m_iRebirthLevel + 1);
+	if (dwMaxGold > 1000000) dwMaxGold = 1000000;
+	wsprintf(G_cTxt, "%d Gold", dwMaxGold);
+	if (GetGoldCount() < dwMaxGold) PutString2(sX + 40, sY + 255, G_cTxt, 250, 0, 0);
+	else PutString2(sX + 40, sY + 255, G_cTxt, 0, 250, 0);
+	if ((_iCalcTotalWeight() / 100) < 55) PutString2(sX + 40, sY + 270, "Carrying weight < 55", 250, 0, 0);
+	else PutString2(sX + 40, sY + 270, "Carrying weight < 55", 0, 250, 0);
+
+	if ((msX >= sX + 5 && msX <= limitX) && (msY >= limitY - 45 && msY <= limitY - 15)) {
+		PutAlignedString(sX + 5, limitX, limitY - 30, "Start New Rebirth", 255, 255, 255);
+	}
+	else
+	{
+		PutAlignedString(sX + 5, limitX, limitY - 30, "Start New Rebirth", 250, 250, 0);
+	}
+}
+
+DWORD CGame::GetGoldCount()
+{
+	DWORD dwCount = 0;
+	for (int i = 0; i < DEF_MAXITEMS; i++)
+		if (m_pItemList[i] != NULL)
+		{
+			if (strcmp(m_pItemList[i]->m_cName, "Gold") == 0) dwCount += m_pItemList[i]->m_dwCount;
+		}
+
+	return dwCount;
+}
+
+void CGame::DlgBoxClick_Rebirth(int msX, int msY)
+{
+	int sX, sY;
+	sX = m_stDialogBoxInfo[52].sX;
+	sY = m_stDialogBoxInfo[52].sY;
+
+	int limitX = sX + m_stDialogBoxInfo[52].sSizeX;
+	int limitY = sY + m_stDialogBoxInfo[52].sSizeY;
+
+	if ((msX >= sX + 5 && msX <= limitX) && (msY >= limitY - 45 && msY <= limitY - 15)) {
+		SendChat("/reqrebirth");
 	}
 }

@@ -25,6 +25,8 @@
 
 #define DEF_NOTIFY_MOBKILLS 0x0A68
 
+#define DEF_NOTIFY_REBIRTH 0x0A69
+
 // Reversed by Snoopy from real 3.72 client
 #define DEF_REQUEST_ANGEL				0x0FC9421E
 

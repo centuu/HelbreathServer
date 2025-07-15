@@ -1208,6 +1208,18 @@ public:
 	char* GetFragmentDesc(DWORD dwType);
 	char* GetShardName(DWORD dwType);
 	char* GetFragmentName(DWORD dwType);
+
+	void requestRebirth(int client);
+	void switchRebirth(int client);
+	void calcStatsPoints(int client);
+	void unequipItems(int client);
+	void copyStats(int client);
+	void restoreStats(int client);
+	void copyLevel(int client);
+	void copyExp(int client);
+	void copyStatsPoints(int client);
+	void calculatePoints(int client);
+	void AutoSkill(int iClientH);
 };
 
 #endif // !defined(AFX_GAME_H__C3D29FC5_755B_11D2_A8E6_00001C7030A6__INCLUDED_)

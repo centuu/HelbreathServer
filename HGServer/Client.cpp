@@ -328,6 +328,22 @@ CClient::CClient(HWND hWnd)
 	for (i = 0; i < 100; i++) {
 		m_pMobKillCount[i] = NULL;
 	}
+
+	//HeatoN rebirth 2024
+	m_iRebirthLevel = 0;
+	m_sRebirthStatus = 0;
+	m_sRebirthEnabled = 0;
+	m_iBackRebirthLevel = 0;
+
+	m_iBackExp = 0;
+	m_iBackStatsPoint = 0;
+	m_iBackLevel = 0;
+	m_iBackStr = 0;
+	m_iBackVit = 0;
+	m_iBackInt = 0;
+	m_iBackDex = 0;
+	m_iBackChr = 0;
+	m_iBackMag = 0;
 }
 
 CClient::~CClient()
@@ -665,4 +681,16 @@ void CClient::save_fragments_data()
 
 		fclose(fp);
 	}
+}
+
+//HeatoN rebirth
+int CClient::getRebirthStats()
+{
+	int result = 0;
+	if (m_iRebirthLevel != 0)
+	{
+		result = m_iRebirthLevel * 3;
+	}
+
+	return result;
 }
